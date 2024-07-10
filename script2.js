@@ -1,8 +1,9 @@
-let play_now_button = document.getElementById("play-now-button");
+
 let theHiddenDiv = document.getElementById("theHiddenDiv");
 let isPlaying = false;
 
 function startTheGame() {
+    let play_now_button = document.getElementById("play-now-button");
     play_now_button.addEventListener("click", playingTheGame)
 }
 
@@ -22,7 +23,7 @@ function stopTheGame() {
 
 function playingTheGame() {
     // here remove hidden, convert play now button to stop now, add evnet listener to stop now button
-    
+    let play_now_button = document.getElementById("play-now-button");
     theHiddenDiv.classList.remove("hidden");
     play_now_button.outerHTML = "<h3 id=\"stop-now-button\" class=\"game-button bgRed\">Stop playing..</h3>";
     isPlaying = true;
@@ -38,7 +39,7 @@ const green_dice_array = ["./dice_images/green-1.png", "./dice_images/green-2.pn
 function play() {
     let dice1_red = document.getElementById("dice1");
     let dice2_green = document.getElementById("dice2");
-    
+
     dice1_red.addEventListener("click", funcRed);
     dice2_green.addEventListener("click", funcGreen);
 }
@@ -51,6 +52,14 @@ function funcGreen() {
     onePlayed("G")
 }
 
+let redCount = 0
+let greenCount = 0
+
+function resetCounts() {
+    redCount = 0;
+    greenCount = 0;
+}
+
 function onePlayed(playerPlayed) {
 
     if (!isPlaying) return;
@@ -58,8 +67,7 @@ function onePlayed(playerPlayed) {
     let dice1_red = document.getElementById("dice1");
     let dice2_green = document.getElementById("dice2");
 
-    let redCount = 0
-    let greenCount = 0
+
     if (playerPlayed == "R") {
         redCount = Math.floor(Math.random() * red_dice_array.length);
         dice1_red.innerHTML = '<img src="' + red_dice_array[redCount] + '"/>';
@@ -72,28 +80,58 @@ function onePlayed(playerPlayed) {
         dice2_green.innerHTML = '<img src="' + green_dice_array[greenCount] + '"/>';
 
         dice2_green.removeEventListener("click", funcGreen);
-        dice1_red.removeEventListener("click", funcRed);
+        dice1_red.addEventListener("click", funcRed);
         greenCount++;
     }
 
     // Now waiting for 5 seconds for other one to play, and display the result. Else quit the game
+    let flag = 0;
     setTimeout(() => {
-        if (redCount != 0 && greenCount != 0) {
-            if (redCount > greenCount) {
+        if ((redCount != 0 && greenCount == 0) ||(redCount == 0 && greenCount != 0)) {
+            resetCounts();
+            stopTheGame();
+            flag = 1;
+        }
+    }, 3000)
+    if (redCount != 0 && greenCount != 0) {
+        flag = 1;
+        if (redCount > greenCount) {
+            setTimeout(() => {
                 alert("The player1 (Red) WON !!");
-                stopTheGame();
-            } else if (redCount < greenCount) {
+            }, 50)
+            
+            // resetCounts();
+            // stopTheGame();
+        } else if (redCount < greenCount) {
+            setTimeout(() => {
                 alert("The player2 (Green) WON !!");
-                stopTheGame()
-            } else if (redCount == greenCount) {
+            }, 50)
+            
+            // resetCounts();
+            // stopTheGame()
+        } else if (redCount == greenCount) {
+            setTimeout(() => {
                 alert("TIE !!")
+            }, 50)
+            
+            // resetCounts();
+            // stopTheGame()
+        }
+    }
+    
+        setTimeout(() => {
+            if (flag == 0) {
+                resetCounts()
                 stopTheGame()
             }
-        } else {
-            stopTheGame()
-        }
-        
-    }, 5000);
+            
+        }, 3000)
+    
+    
+
+
+
+
 
 }
 
